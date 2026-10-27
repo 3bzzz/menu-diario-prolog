@@ -1,0 +1,85 @@
+% desayuno(Nombre, Calorias)
+
+desayuno(huevo_con_jamon, 250).
+desayuno(jugo_de_fruta, 120).
+desayuno(quesadillas_de_flor_de_calabaza, 130).
+desayuno(hot_cakes_avena, 125).
+desayuno(huevos_a_la_mexicana, 182).
+desayuno(fruta_fresca, 80).
+desayuno(avena_cocida, 91).
+desayuno(huevo_frito, 206).
+desayuno(huevo_revuelto, 155).
+desayuno(sandwich, 225).
+%comida(Nombre, Calorias)
+comida(albondigas, 214).
+comida(arroz_con_pollo, 88).
+comida(burrito, 239).
+comida(enchiladas, 273).
+comida(espagueti_con_tomate, 129).
+comida(fajitas_de_pollo, 161).
+comida(sopa_de_pasta, 51).
+comida(sopa_de_lentejas, 25).
+comida(milanesas_de_pollo, 154).
+comida(sopes, 202).
+comida(tacos_dorados, 270).
+%cena(Nombre, Calorias)
+cena(omelette, 387).
+cena(caldo_pollo, 60).
+cena(leche_vaca, 115).
+cena(leche_almendras, 30).
+cena(pan_dulce, 266).
+cena(verduras_a_vapor, 35).
+cena(ceral_con_leche, 378).
+cena(quesadillas, 120).
+%================================================================
+%REGLAS LOGICAS
+%================================================================
+%Regla 1 - suma de desayuno comida
+suma_parcial_dco(Desayuno, Comida, Subtotal) :-
+    desayuno(Desayuno, KcalD),
+    comida(Comida, KcalC),
+    Subtotal is KcalD + KcalC.
+%Regla 2 - suma de las tres comidas
+total_de_menu(Desayuno, Comida, Cena, Total) :-
+    desayuno(Desayuno, KcalD),
+    comida(Comida, KcalCo),
+    cena(Cena, KcalC),
+    Total is KcalD + KcalCo + KcalC.
+%Regla 3 - clasificacion de menu deficit
+menu_deficit(D, Co, C) :-
+    total__de_menu(D, Co, C, Total),
+    Total < 800.
+%RRegla 4 - Clasificacion de menu balance
+menu_balanceado(D, Co, C) :-
+    total_de_menu(D,Co, C, Total),
+    Total >= 1300,
+    Total =< 1700.
+%Rgla 5 - menu excedente
+menu_excedente(D, Co, C) :-
+    total_de_menu(D, Co, C, Total),
+    Total >1700.
+%regla 6 - desayuno balnce
+desayuno_ligeo(Desayuno) :-
+    desayuno(Desayuno, Calorias),
+    Calorias =< 600.
+%Regla 7- Cena balanceada
+cena_liger(Cena) :-
+    cena(Cena, Calorias),
+    Calorias =< 400.
+%Regla 8 - Al menos una debe ser ligera
+combinacion_saludable(D, Co, C) :-
+    total__de_menu(D, Co, C, _),
+    (desayuno_ligero(D); cena_ligera(C)).
+%Regla 9 - Validacion de que la comida no sea muy pesada
+comida_no_pesad(Comida) :-
+    comida(Comida, Calorias),
+    Calorias =< 700.
+%PREDICADO DE BUSQUEDA
+generar_el_menu(MaxCalorias, MinCalorias, D, Co, C, TotalCalorias) :-
+    desayuno(D, _),
+    comida(Co, _),
+    cena(C, _),
+    total_de_menu(D, Co, C, TotalCalorias),
+    TotalCalorias =< MaxCalorias,
+    TotalCalorias >= MinCalorias,
+    comida_no_pesad(Co).
