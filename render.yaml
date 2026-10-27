@@ -2,8 +2,5 @@ services:
   - type: web
     name: menu-diario-prolog
     env: python
-    buildCommand: "apt-get update && apt-get install -y swi-prolog && pip install -r requirements.txt"
+    buildCommand: "pip install -r requirements.txt"
     startCommand: "python app.py"
-    envVars:
-      - key: PYTHON_VERSION
-        value: 3.10.12
